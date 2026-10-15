@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">artly.io</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="ok_action">OK</string>
+    <string name="next_action">Next</string>
+    <string name="use_action">Use</string>
+    <string name="ignore_action">Ignore</string>
+    <string name="got_it_action">Got it</string>
+    <string name="change_action">Change</string>
+    <string name="remove_action">Remove</string>
+
+    <!-- List -->
+    <string name="add_artwork_desc">Record art</string>
+    <string name="empty_artworks_title">No art yet</string>
+    <string name="empty_artworks_message">Take a photo of art you see, and it's kept here, on your phone.</string>
+    <string name="sort_newest">Newest</string>
+    <string name="sort_oldest">Oldest</string>
+    <string name="sort_name">A–Z</string>
+    <plurals name="artworks_count">
+        <item quantity="one">%1$d artwork</item>
+        <item quantity="other">%1$d artworks</item>
+    </plurals>
+    <string name="untitled">Untitled</string>
+    <string name="place_names_notice">Place names are looked up with %1$s from where you saw the art. Only the coordinates are sent, not the photos or what you wrote.</string>
+
+    <!-- Recording -->
+    <string name="new_artwork">New artwork</string>
+    <string name="edit_artwork">Edit artwork</string>
+    <string name="artwork_photo_desc">Photo of the artwork</string>
+    <string name="camera_action">Camera</string>
+    <string name="browse_action">Browse</string>
+    <string name="retake_action">Retake</string>
+    <string name="photo_metadata_time_and_place">Use when and where the photo was taken?</string>
+    <string name="photo_metadata_time">Use when the photo was taken?</string>
+    <string name="title_label">Title</string>
+    <string name="title_placeholder">e.g. The Starry Night</string>
+    <string name="artist_label">Artist</string>
+    <string name="artist_placeholder">e.g. Vincent van Gogh</string>
+    <string name="when_title">When</string>
+    <string name="now">Now</string>
+    <string name="location_label">Location</string>
+    <string name="waiting_for_location">Waiting for your location…</string>
+    <string name="location_none">No location</string>
+    <string name="location_from_device">%1$s, here</string>
+    <string name="location_from_photo">%1$s, where the photo was taken</string>
+    <string name="use_my_location_action">Use mine</string>
+    <string name="note_optional_title">Note (optional)</string>
+    <string name="note_placeholder">e.g. the museum and room, or what struck you</string>
+    <string name="save_artwork_action">Save artwork</string>
+    <string name="save_changes_action">Save changes</string>
+
+    <!-- Details -->
+    <string name="seen_label">Seen</string>
+    <string name="note_title">Note</string>
+    <string name="error_artwork_not_found">This artwork no longer exists.</string>
+    <string name="delete_artwork_title">Delete this artwork?</string>
+    <string name="delete_artwork_message">The artwork and its photo will be permanently removed.</string>
+    <string name="open_in_maps_app">Open in maps app</string>
+    <string name="no_maps_app">No maps app is installed.</string>
+</resources>

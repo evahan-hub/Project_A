@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A framed picture: a frame with a sun and hills in it. The safe zone of adaptive icons is the middle 66 of 108. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Frame -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M34,36h40a4,4 0,0 1,4 4v28a4,4 0,0 1,-4 4h-40a4,4 0,0 1,-4 -4v-28a4,4 0,0 1,4 -4zM36,42v24h36v-24z" />
+    <!-- Sun -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M62,49m-3.5,0a3.5,3.5 0,1 1,7 0a3.5,3.5 0,1 1,-7 0" />
+    <!-- Hills -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,66l10,-12l7,8l5,-5l14,9z" />
+</vector>

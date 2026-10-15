@@ -1,0 +1,62 @@
+<resources>
+    <string name="cancel">Abbrechen</string>
+    <string name="back">Zurück</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="delete">Löschen</string>
+    <string name="ok_action">OK</string>
+    <string name="next_action">Weiter</string>
+    <string name="use_action">Übernehmen</string>
+    <string name="ignore_action">Ignorieren</string>
+    <string name="got_it_action">Verstanden</string>
+    <string name="change_action">Ändern</string>
+    <string name="remove_action">Entfernen</string>
+
+    <!-- List -->
+    <string name="add_artwork_desc">Kunst festhalten</string>
+    <string name="empty_artworks_title">Noch keine Kunst</string>
+    <string name="empty_artworks_message">Fotografieren Sie Kunst, die Sie sehen – sie wird hier auf Ihrem Telefon gespeichert.</string>
+    <string name="sort_newest">Neueste</string>
+    <string name="sort_oldest">Älteste</string>
+    <string name="sort_name">A–Z</string>
+    <plurals name="artworks_count">
+        <item quantity="one">%1$d Kunstwerk</item>
+        <item quantity="other">%1$d Kunstwerke</item>
+    </plurals>
+    <string name="untitled">Ohne Titel</string>
+    <string name="place_names_notice">Ortsnamen werden anhand der Orte, an denen Sie die Kunst gesehen haben, bei %1$s nachgeschlagen. Dabei werden nur die Koordinaten übermittelt, nicht die Fotos oder Ihre Notizen.</string>
+
+    <!-- Recording -->
+    <string name="new_artwork">Neues Kunstwerk</string>
+    <string name="edit_artwork">Kunstwerk bearbeiten</string>
+    <string name="artwork_photo_desc">Foto des Kunstwerks</string>
+    <string name="camera_action">Kamera</string>
+    <string name="browse_action">Auswählen</string>
+    <string name="retake_action">Neu aufnehmen</string>
+    <string name="photo_metadata_time_and_place">Zeit und Ort des Fotos übernehmen?</string>
+    <string name="photo_metadata_time">Aufnahmezeit des Fotos übernehmen?</string>
+    <string name="title_label">Titel</string>
+    <string name="title_placeholder">z. B. Die Sternennacht</string>
+    <string name="artist_label">Künstler·in</string>
+    <string name="artist_placeholder">z. B. Vincent van Gogh</string>
+    <string name="when_title">Wann</string>
+    <string name="now">Jetzt</string>
+    <string name="location_label">Ort</string>
+    <string name="waiting_for_location">Warte auf Ihren Standort…</string>
+    <string name="location_none">Kein Ort</string>
+    <string name="location_from_device">%1$s, hier</string>
+    <string name="location_from_photo">%1$s, wo das Foto aufgenommen wurde</string>
+    <string name="use_my_location_action">Meinen nutzen</string>
+    <string name="note_optional_title">Notiz (optional)</string>
+    <string name="note_placeholder">z. B. Museum und Raum, oder was Ihnen auffiel</string>
+    <string name="save_artwork_action">Kunstwerk speichern</string>
+    <string name="save_changes_action">Änderungen speichern</string>
+
+    <!-- Details -->
+    <string name="seen_label">Gesehen</string>
+    <string name="note_title">Notiz</string>
+    <string name="error_artwork_not_found">Dieses Kunstwerk gibt es nicht mehr.</string>
+    <string name="delete_artwork_title">Dieses Kunstwerk löschen?</string>
+    <string name="delete_artwork_message">Das Kunstwerk und sein Foto werden endgültig entfernt.</string>
+    <string name="open_in_maps_app">In Karten-App öffnen</string>
+    <string name="no_maps_app">Es ist keine Karten-App installiert.</string>
+</resources>

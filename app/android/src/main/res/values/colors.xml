@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Paper of the theme, see LightColorScheme. -->
+    <color name="background">#F7F5F0</color>
+    <!-- Terracotta of the theme. -->
+    <color name="ic_launcher_background">#A9432A</color>
+</resources>
