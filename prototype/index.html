@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Atelier Hours prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FBFAF4;--bg2:#F2F0E6;--land:#EFEDE2;--text:#091717;--text2:#5B6A6A;--sep:rgba(9,23,23,.12);--fill:rgba(9,23,23,.06);--accent:#2F4A73;--on-accent:#FFFFFF;--glass:rgba(251,250,244,.88);--water:#D6E0E8;--park:#DCE5D0;--page:#E7E5DA;--frame:#1E2B40;--r:8px;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1616;--bg2:#142121;--land:#122020;--text:#E7E8E2;--text2:#8C9C9B;--sep:rgba(231,232,226,.14);--fill:rgba(231,232,226,.08);--accent:#9DB4DA;--on-accent:#0E1616;--glass:rgba(14,22,22,.88);--water:#1B2C40;--park:#182A22;--page:#050B0B;--frame:#1F2C2C;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1616;--bg2:#142121;--land:#122020;--text:#E7E8E2;--text2:#8C9C9B;--sep:rgba(231,232,226,.14);--fill:rgba(231,232,226,.08);--accent:#9DB4DA;--on-accent:#0E1616;--glass:rgba(14,22,22,.88);--water:#1B2C40;--park:#182A22;--page:#050B0B;--frame:#1F2C2C;color-scheme:dark}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;height:100%;background:var(--page);color:var(--text);font-family:"Geist",-apple-system,BlinkMacSystemFont,"Helvetica Neue",system-ui,sans-serif;letter-spacing:-.005em;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer;letter-spacing:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage{height:100%;display:flex;align-items:center;justify-content:center;gap:56px;padding:20px}
+.aside{max-width:260px}
+.aside h1{font-size:26px;font-weight:500;margin:0 0 10px;letter-spacing:-.02em}
+.aside p{font-size:15px;line-height:1.55;color:var(--text2);margin:0 0 12px}
+.aside .link{background:none;border:0;padding:0;color:var(--accent);font-size:15px;font-weight:500}
+.phone{--top:56px;--bot:22px;position:relative;height:min(874px,100%);aspect-ratio:402/874;border-radius:11.5% / 5.3%;overflow:hidden;background:var(--bg);box-shadow:0 0 0 11px var(--frame),0 40px 90px rgba(0,0,0,.25);flex:none}
+.status{position:absolute;top:0;left:0;right:0;height:50px;z-index:9;display:flex;align-items:center;justify-content:space-between;padding:6px 34px 0;font-size:15px;font-weight:600;pointer-events:none}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:124px;height:36px;border-radius:20px;background:#000}
+@media (max-width:520px){.stage{display:block;padding:0}.aside{display:none}.phone{--top:10px;--bot:10px;width:100%;height:100%;aspect-ratio:auto;border-radius:0;box-shadow:none}.status{display:none}}
+.scroll{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;padding-bottom:120px;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.scroll.mapmode{overflow:hidden;padding:0}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid var(--sep)}
+.top{position:absolute;top:var(--top);left:16px;right:16px;z-index:8;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.top>*{pointer-events:auto}
+.row{display:flex;gap:8px;align-items:center}
+.cap{height:32px;padding:0 12px;border-radius:var(--r);display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:500}
+.circ{width:32px;height:32px;border-radius:var(--r);display:inline-flex;align-items:center;justify-content:center;padding:0}
+.circ[data-act="back"]{border-color:transparent;background:var(--glass)}
+.circ svg{width:18px;height:18px}
+.head{padding:calc(var(--top) + 54px) 20px 4px}
+.head.tl{padding:calc(var(--top) + 11px) 64px 4px 20px}
+.head.tl .lt{font-size:26px;line-height:1}
+.head.tl .sub{margin-top:8px}
+.lt{font-size:30px;font-weight:500;letter-spacing:-.025em;margin:0}
+.sub{margin:4px 0 0;font-size:14px;color:var(--text2)}
+.sh{display:flex;justify-content:space-between;align-items:baseline;padding:28px 20px 12px}
+.sh h2{font-size:17px;font-weight:500;margin:0;letter-spacing:-.01em}
+.link{background:none;border:0;padding:0;color:var(--accent);font-size:14px;font-weight:500}
+.hs{display:flex;gap:12px;overflow-x:auto;padding:0 20px;scrollbar-width:none}
+.hs::-webkit-scrollbar{display:none}
+.alb{flex:none;width:148px;background:none;border:0;padding:0;text-align:left}
+.cov{width:100%;aspect-ratio:1;border-radius:4px;background:var(--fill) center/cover}
+.an{display:block;font-size:14px;font-weight:500;margin-top:8px}
+.ac{display:block;font-size:13px;color:var(--text2);margin-top:1px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.cell{aspect-ratio:1;border:0;padding:0;background:var(--fill) center/cover;position:relative;border-radius:0}
+.cell .star{position:absolute;left:5px;top:5px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.cell .ck{position:absolute;right:5px;bottom:5px;width:20px;height:20px;border-radius:5px;border:1.5px solid #fff;background:rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;color:#fff}
+.cell.sel::after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.3)}
+.cell.sel .ck{background:var(--accent);z-index:1}
+.bot{position:absolute;left:0;right:0;bottom:0;z-index:6}
+.gnb{display:flex;align-items:center;gap:10px;padding:0 14px calc(var(--bot) + 2px)}
+.tabbar{flex:1;height:62px;border-radius:31px;display:flex;align-items:center;gap:2px;padding:0 6px;box-shadow:0 10px 30px rgba(9,23,23,.12),0 1px 2px rgba(9,23,23,.06)}
+.fab{width:62px;height:62px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;padding:0;color:var(--text);box-shadow:0 10px 30px rgba(9,23,23,.12),0 1px 2px rgba(9,23,23,.06)}
+.me{width:32px;height:32px;border-radius:50%;border:1px solid var(--sep);background:var(--accent);color:var(--on-accent);font-size:13px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.tab{flex:1;height:50px;border:0;border-radius:25px;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10.5px;font-weight:500;color:var(--text2)}
+.tab.on{color:var(--text);background:var(--fill)}.tab.on svg{color:var(--accent)}
+.tab .pb{display:flex;align-items:center;justify-content:center;color:var(--text);height:38px}
+.selbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 14px calc(var(--bot) + 2px);height:62px;padding:0 10px 0 20px;border-radius:31px;border:1px solid var(--sep);box-shadow:0 10px 30px rgba(9,23,23,.12);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);font-size:14px;font-weight:500}
+.selbar .acts{display:flex;gap:6px}.selbar>span:first-child{white-space:nowrap}.selbar .ghost{border-radius:20px;height:40px;white-space:nowrap;padding:0 14px}.buybar .pri.sm{border-radius:24px;height:46px}
+.ghost{height:36px;border-radius:var(--r);border:1px solid var(--sep);background:none;padding:0 12px;font-size:14px;font-weight:500}
+.seg{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);display:flex;padding:3px;border-radius:10px;gap:2px}
+.seg button{height:32px;padding:0 16px;border-radius:7px;border:0;background:none;font-size:13px;font-weight:500;color:var(--text2)}
+.seg button.on{background:var(--text);color:var(--bg)}
+.hero{position:relative;height:360px;background:var(--fill) center/cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 60%,rgba(0,0,0,.4))}
+.hero .ht{position:absolute;left:20px;right:20px;bottom:18px;z-index:1;color:#fff}
+.hero h1{font-size:30px;font-weight:500;margin:0;letter-spacing:-.025em}
+.hero p{margin:2px 0 0;font-size:14px;opacity:.9}
+.idea{padding:0 20px 14px;margin:0;font-size:15px;line-height:1.5;color:var(--text2)}
+.hero+.idea{padding-top:16px}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px 12px;padding:4px 20px}
+.tgrid .alb{width:auto}
+.newth{aspect-ratio:1;border-radius:4px;border:1px dashed var(--text2);display:flex;align-items:center;justify-content:center;color:var(--accent)}
+.wrow{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px;border-radius:6px;border:1px solid var(--sep);font-size:12px;font-weight:500;white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:#2E9E5B}.dot.sold{background:#D2423B}
+.wall{display:flex;flex-direction:column;gap:44px;padding:28px 34px 14px;background:var(--bg2);margin-top:16px}
+.art{background:none;border:0;padding:0;text-align:left;width:100%}
+.mat{background:#FCFBF7;padding:16px;border:1px solid rgba(0,0,0,.06);box-shadow:0 1px 2px rgba(0,0,0,.05),0 14px 32px rgba(0,0,0,.12)}
+.mat .im{aspect-ratio:4/5;background:var(--fill) center/cover}
+.lbl{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;margin-top:16px}
+.lbl b{font-size:16px;font-weight:500}.lbl .md{font-size:13px;color:var(--text2)}.lbl .pr{font-size:15px;text-align:right}.lbl .pill{justify-self:end}
+.pd-art{background:var(--bg2);padding:calc(var(--top) + 60px) 40px 36px}
+.pd-info{padding:22px 20px 0}
+.pd-info h1{font-size:28px;font-weight:500;margin:0;letter-spacing:-.025em}
+.pd-info .by{margin:4px 0 18px;font-size:15px;color:var(--text2)}
+.facts{display:grid;grid-template-columns:1fr 1fr;column-gap:16px;margin:0;border-top:1px solid var(--sep)}
+.facts div{padding:11px 0;border-bottom:1px solid var(--sep)}
+.facts dt{font-size:12px;color:var(--text2)}
+.facts dd{margin:2px 0 0;font-size:15px}
+.buybar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 14px calc(var(--bot) + 2px);padding:8px 8px 8px 22px;border-radius:31px;border:1px solid var(--sep);box-shadow:0 10px 30px rgba(9,23,23,.12);background:var(--glass);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.buybar b{display:block;font-size:18px;font-weight:500}
+.buybar small{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2)}
+.pri{width:100%;height:48px;border-radius:10px;border:0;background:var(--accent);color:var(--on-accent);font-size:15px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.pri.sm{width:auto;height:44px;padding:0 18px}
+.rec{position:absolute;inset:0;overflow-y:auto;background:var(--bg);z-index:7;scrollbar-width:none}
+.ah{position:absolute;top:calc(var(--top) + 8px);left:0;right:0;text-align:center;margin:0;font-weight:600;font-size:16px;letter-spacing:.02em}
+.rec-mat{margin:calc(var(--top) + 56px) 34px 0}
+.rec-b{padding:24px 22px 60px;max-width:560px}
+.rec-b h1{font-size:28px;font-weight:500;margin:0;letter-spacing:-.025em}
+.rec-b .by{margin:4px 0 18px;font-size:15px;color:var(--text2)}
+.rec-b .facts{margin-bottom:22px}
+.pnote{font-size:13px;color:var(--text2);margin:10px 0 0;line-height:1.45}
+.foot{margin:28px 0 0;font-size:12.5px;color:var(--text2)}
+.scrim{position:absolute;inset:0;z-index:20;background:rgba(9,23,23,.3);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.open{opacity:1;pointer-events:auto}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:21;border-radius:16px 16px 0 0;padding:10px 20px calc(20px + var(--bot));background:var(--bg);border-top:1px solid var(--sep);transform:translateY(105%);transition:transform .3s cubic-bezier(.2,.9,.3,1);max-height:88%;overflow-y:auto}
+.sheet.open{transform:none}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--sep);margin:0 auto 14px}
+.sheet h3{font-size:18px;font-weight:500;margin:0 0 4px;letter-spacing:-.01em}
+.sheet .hint{font-size:14px;color:var(--text2);margin:0 0 14px;line-height:1.45}
+.opt{width:100%;display:flex;align-items:center;gap:14px;padding:13px 0;background:none;border:0;border-bottom:1px solid var(--sep);font-size:15px;text-align:left}
+.opt:last-of-type{border-bottom:0}
+.opt i{width:32px;height:32px;border-radius:8px;background:var(--fill);display:flex;align-items:center;justify-content:center;color:var(--accent);font-style:normal}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.chip{height:34px;border-radius:8px;border:1px solid var(--sep);background:none;padding:0 12px;font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.chip.add{color:var(--accent)}
+.fld{display:block;margin:0 0 12px}
+.fld span{display:block;font-size:12px;color:var(--text2);margin:0 0 5px}
+.fld input,.fld textarea{width:100%;height:44px;border-radius:8px;border:1px solid var(--sep);background:var(--bg);padding:0 12px;font:inherit;font-size:16px;color:var(--text)}
+.fld textarea{height:80px;padding:10px 12px;resize:none}
+.err{color:#D2423B;font-size:13px;margin:-6px 0 10px}
+.prev{width:72px;height:72px;border-radius:6px;background:var(--fill) center/cover;flex:none}
+.prow{display:flex;gap:14px;align-items:center;margin:4px 0 16px}
+.qr{display:flex;justify-content:center;padding:16px;background:#fff;border-radius:8px;border:1px solid var(--sep);margin:4px auto 14px;width:fit-content}
+.toast{position:absolute;top:calc(var(--top) + 48px);left:50%;transform:translate(-50%,-30%);z-index:30;height:38px;border-radius:8px;padding:0 14px;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;background:var(--text);color:var(--bg);border:0;opacity:0;pointer-events:none;transition:transform .25s,opacity .2s}
+.toast.show{transform:translate(-50%,0);opacity:1}
+.count{text-align:center;margin:20px 0 0;font-size:14px;font-weight:500}.count small{font-weight:400;color:var(--text2);font-size:13px}
+.done{width:60px;height:60px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;margin:6px auto 12px}
+.empty{padding:40px 30px;text-align:center;color:var(--text2);font-size:15px}
+.mapwrap{position:absolute;inset:0;background:var(--land)}
+.map{width:100%;height:100%;display:block}
+.land{fill:var(--land)}.water{fill:var(--water)}.river{fill:none;stroke:var(--water);stroke-width:9;stroke-linecap:round}.canal{fill:none;stroke:var(--water);stroke-width:3.5}.park{fill:var(--park)}.ring{fill:none;stroke:var(--sep);stroke-width:1.2;stroke-dasharray:3 5}
+.ml{fill:var(--text2);font-size:10px;letter-spacing:.06em;font-family:inherit}
+.mp{cursor:pointer}.mpb{fill:#fff;stroke:rgba(9,23,23,.18);stroke-width:1}.mp.on .mpb{stroke:var(--accent);stroke-width:3}.mpc{fill:var(--accent)}.mpn{fill:#fff;font-size:10.5px;font-weight:600;font-family:inherit}
+.mapcap{position:absolute;top:calc(var(--top) + 48px);left:16px;height:32px;padding:0 12px;border-radius:var(--r);display:flex;align-items:center;font-size:13px;font-weight:500}
+.placecard{position:absolute;left:12px;right:12px;bottom:150px;border-radius:12px;padding:12px}
+.placecard b{display:block;font-size:15px;font-weight:500}.placecard small{font-size:13px;color:var(--text2)}
+.pstrip{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;margin-top:10px;border-radius:4px;overflow:hidden}
+.lt,.hero h1,.pd-info h1,.rec-b h1,.aside h1,.sheet h3,.sh h2,.lbl b{font-family:"Newsreader","Iowan Old Style",Georgia,serif;font-weight:400;letter-spacing:-.015em}
+.lt{font-size:34px;line-height:1.1}.hero h1{font-size:36px}.pd-info h1,.rec-b h1{font-size:32px}.sh h2{font-size:21px}.sheet h3{font-size:22px}.lbl b{font-size:18px}.aside h1{font-size:30px}
+@media (prefers-reduced-motion:reduce){.sheet,.toast,.scrim{transition:none}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="aside">
+    <h1>Atelier Hours</h1>
+    <p>A prototype for interviews. Save a glimpse, add it to a series, make it a piece, then open its buy page, as a visitor would after scanning the QR code.</p>
+    <p>Photos and notes stay on this device.</p>
+    <button class="link" data-go="#/record/ember">Open a buy page</button>
+  </div>
+  <div class="phone" id="phone">
+    <div class="status"><span>9:41</span><div class="island"></div><span>&#9679;&#9679;&#9679;</span></div>
+    <div class="scroll" id="scroll"></div>
+    <div class="top" id="top"></div>
+    <div class="bot" id="bot"></div>
+    <div id="recLayer"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="scrim" id="scrim" data-act="close"></div>
+    <div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+    <input type="file" id="fCam" accept="image/*" capture="environment" hidden>
+    <input type="file" id="fLib" accept="image/*" hidden>
+  </div>
+</div>
+<script>
+const KEY='atelier-hours-poc-v1';
+const ICONS={
+plus:'<path d="M12 5v14M5 12h14"/>',
+back:'<path d="M15 5l-7 7 7 7"/>',
+photo:'<rect x="3" y="4.5" width="18" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="M21 15.5l-5-5-8.5 9"/>',
+stack:'<rect x="4" y="9" width="16" height="11" rx="2.5"/><path d="M6.5 6h11M9 3h6"/>',
+frame:'<rect x="4" y="3" width="16" height="18" rx="2.5"/><rect x="7.5" y="6.5" width="9" height="11" rx="1"/>',
+share:'<path d="M12 3v12M8 7l4-4 4 4M7 11H6a1 1 0 0 0-1 1v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7a1 1 0 0 0-1-1h-1"/>',
+qr:'<rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.5"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.5"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM14 18.5v2M18.5 14h2"/>',
+record:'<rect x="4.5" y="3" width="15" height="18" rx="2.5"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+person:'<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c1.4-3.6 4.2-5.4 7.5-5.4s6.1 1.8 7.5 5.4"/>',
+check:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+camera:'<rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.6"/><path d="M8.5 7l1.4-2.6h4.2L15.5 7"/>',
+sparkle:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M18 6l-2.5 2.5M8.5 15.5L6 18"/>',
+x:'<path d="M6 6l12 12M18 6L6 18"/>',
+chev:'<path d="M9 5l7 7-7 7"/>',
+pin:'<path d="M12 21s7-6.2 7-11.5a7 7 0 0 0-14 0C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>'
+};
+const ic=(n,s=22,w=1.9)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[n]}</svg>`;
+const star=s=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.2l2.6 5.6 6 .7-4.5 4.1 1.2 6-5.3-3-5.3 3 1.2-6L3.4 9.5l6-.7z"/></svg>`;
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmt=d=>{const [y,m,dd]=d.split('-');return `${Number(dd)} ${MON[Number(m)-1]}`};
+const today=()=>new Date().toISOString().slice(0,10);
+function rng(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const PAL={
+dusk:[['#34507A','#1F2E46','#E8A65A'],['#8FA3B8','#34507A','#F2E3C6'],['#3B3530','#1E1B19','#C9A24B'],['#A9432A','#3B3530','#F2C6A0'],['#2A3B57','#141D2B','#D9B8A0']],
+water:[['#8FA3B8','#5E7A92','#F4EFE6'],['#E4DCCF','#8FA3B8','#34507A'],['#6B7A4F','#3E4A33','#E4DCCF'],['#B9C6D2','#6F8799','#FFFFFF']],
+still:[['#E4DCCF','#D9B8A0','#A9432A'],['#F2EDE4','#E4DCCF','#3B3530'],['#D9B8A0','#C9A24B','#F7F2EA'],['#EAE3D6','#B8AE9C','#6B7A4F']]
+};
+function mkArt(p,r){const c=p[Math.floor(r()*p.length)];return{s:c[0],g:c[1],d:c[2],h:+(.45+r()*.3).toFixed(2),x:+(.25+r()*.5).toFixed(2),y:+(-.26+r()*.28).toFixed(2),r:+(.08+r()*.15).toFixed(2),k:['disc','half','ring','line'][Math.floor(r()*4)]}}
+function artSVG(a){const cx=a.x*100,cy=(a.h+a.y)*100,R=a.r*100,H=a.h*100;let pre='',post='';
+if(a.k==='half')pre=`<circle cx="${cx}" cy="${H-R*.15}" r="${R}" fill="${a.d}"/>`;
+else if(a.k==='ring')post=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${a.d}" stroke-width="2.2"/>`;
+else if(a.k==='line')post=`<line x1="0" x2="100" y1="${H}" y2="${H}" stroke="${a.d}" stroke-width=".9"/><circle cx="${cx}" cy="${cy}" r="${R*.45}" fill="${a.d}"/>`;
+else post=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="${a.d}"/>`;
+return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice"><rect width="100" height="100" fill="${a.s}"/>${pre}<rect y="${H}" width="100" height="${100-H}" fill="${a.g}"/>${post}</svg>`}
+const bgCache={};
+function bg(t){if(!t)return 'none';if(t.img)return `url("${t.img}")`;if(!bgCache[t.id])bgCache[t.id]=`url("data:image/svg+xml,${encodeURIComponent(artSVG(t.art))}")`;return bgCache[t.id]}
+function addDays(d,n){const x=new Date(d+'T12:00:00Z');x.setUTCDate(x.getUTCDate()+n);return x.toISOString().slice(0,10)}
+function seed(){const r=rng(11);const places=['Rijksmuseum','Westerpark','IJ ferry','Studio','Noordermarkt','Vondelpark','Amstel','Home','Stedelijk','NDSM'];
+const themes=[{id:'dusk',name:'Dusk',idea:'Light just before it’s gone',start:'2026-10-03',p:'dusk',n:10,step:[1,2]},{id:'water',name:'Water',idea:'Surfaces that hold the sky',start:'2026-09-20',p:'water',n:8,step:[2,4]},{id:'still',name:'Stillness',idea:'Small pauses at home',start:'2026-10-08',p:'still',n:6,step:[1,2]}];
+const traces=[];let k=0;const by={};
+themes.forEach(th=>{let d=th.start;by[th.id]=[];for(let i=0;i<th.n;i++){const t={id:'t'+(k++),art:mkArt(PAL[th.p],r),date:d,place:places[Math.floor(r()*places.length)],themes:[th.id]};traces.push(t);by[th.id].push(t.id);d=addDays(d,th.step[0]+Math.floor(r()*(th.step[1]-th.step[0]+1)));if(d>'2026-10-18')d='2026-10-18'}});
+['dusk','water','still','dusk'].forEach((p,i)=>traces.push({id:'t'+(k++),art:mkArt(PAL[p],r),date:addDays('2026-10-10',i*2),place:places[Math.floor(r()*places.length)],themes:[]}));
+const works=[{id:'ember',trace:by.dusk[6],title:'Ember',medium:'Painting',size:'30 × 40 cm',price:'€450',status:'Available'},{id:'lowtide',trace:by.water[3],title:'Low tide',medium:'Photograph',size:'40 × 50 cm print',price:'€200',status:'Sold'},{id:'pause',trace:by.still[2],title:'Pause',medium:'Flowers',size:'Table piece',price:'€90',status:'Available'}];
+return{season:'Autumn season',themes:themes.map(({id,name,idea,start})=>({id,name,idea,start})),traces,works,requests:[]}}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+if(!S||!S.traces)S=seed();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));return true}catch(e){return false}}
+const U={gmode:'grid',tab:'library',sel:false,ids:new Set(),depth:0,last:null,fromApp:false,draft:{medium:'Painting'},resetArm:false};
+const $=id=>document.getElementById(id);
+const T=id=>S.traces.find(t=>t.id===id);
+const TH=id=>S.themes.find(t=>t.id===id);
+const W=id=>S.works.find(w=>w.id===id);
+const sorted=list=>[...list].sort((a,b)=>b.date.localeCompare(a.date)||b.id.localeCompare(a.id));
+const inTheme=id=>S.traces.filter(t=>t.themes.includes(id));
+const workOf=tid=>S.works.find(w=>w.trace===tid);
+function cover(th){const l=sorted(inTheme(th.id));const w=S.works.find(w=>l.some(t=>t.id===w.trace));return w?w.trace:(l[0]&&l[0].id)}
+function period(th){const l=inTheme(th.id);if(!l.length)return 'No traces yet';const last=l.map(t=>t.date).sort().pop();return `${fmt(th.start)} – ${last>=addDays(today(),-3)||last>='2026-10-18'?'now':fmt(last)}`}
+function view(){const h=location.hash||'#/library';const p=h.slice(2).split('/');return{name:p[0]||'library',id:p[1]}}
+function go(h){U.depth++;location.hash=h}
+function back(){if(U.depth>0){U.depth--;history.back()}else location.hash='#/'+U.tab}
+function grid(list){return `<div class="grid">${list.map(t=>`<button class="cell${U.sel&&U.ids.has(t.id)?' sel':''}" data-cell="${t.id}" data-t="${t.id}" aria-label="Glimpse from ${fmt(t.date)}${t.place?', '+esc(t.place):''}">${workOf(t.id)?`<span class="star">${star(15)}</span>`:''}${U.sel?`<span class="ck">${U.ids.has(t.id)?ic('check',13,2.6):''}</span>`:''}</button>`).join('')}</div>`}
+function vLibrary(){const tr=sorted(S.traces);const first=tr.length?tr[tr.length-1].date:today();return `<div class="head tl"><h1 class="lt">Atelier Hours</h1><p class="sub">${esc(S.season)}, ${tr.length} glimpses since ${fmt(first)}</p></div>
+<div class="sh"><h2>Series</h2><button class="link" data-go="#/themes">See all</button></div>
+<div class="hs">${S.themes.map(th=>`<button class="alb" data-go="#/theme/${th.id}"><div class="cov" data-t="${cover(th)||''}"></div><span class="an">${esc(th.name)}</span><span class="ac">${inTheme(th.id).length} glimpses</span></button>`).join('')}</div>
+<div class="sh"><h2>Glimpses</h2><button class="link" data-go="#/glimpses">View all</button></div>${grid(tr.slice(0,16))}
+<p class="count"><button class="link" data-go="#/glimpses">View all ${tr.length} glimpses</button></p>`}
+function placeOf(t){return t.place||'No location'}
+const GEO={'Rijksmuseum':[52.36,4.8852],'Stedelijk':[52.3575,4.877],'Vondelpark':[52.358,4.866],'Westerpark':[52.3866,4.876],'Noordermarkt':[52.379,4.8848],'NDSM':[52.4012,4.8925],'IJ ferry':[52.3815,4.899],'Amstel':[52.3633,4.9025],'Home':[52.3685,4.868],'Studio':[52.37,4.918]};
+const gx=([la,lo])=>[(lo-4.855)/.07*400,(52.425-la)/.095*890];
+const href=t=>t.img?t.img:'data:image/svg+xml,'+encodeURIComponent(artSVG(t.art));
+function vMap(tr){const m={},none=[];tr.forEach(t=>{if(GEO[t.place])(m[t.place]=m[t.place]||[]).push(t);else none.push(t)});const n=Object.keys(m).length;
+const arcs=[50,76,101,127].map(r=>`<path class="canal" d="M${259-r} 431 A ${r} ${(r*1.1).toFixed(1)} 0 0 0 ${259+r} 431"/>`).join('');
+const pins=Object.entries(m).map(([pl,l])=>{const [x,y]=gx(GEO[pl]);return `<g class="mp${U.place===pl?' on':''}" data-place="${esc(pl)}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" role="button" tabindex="0" aria-label="${esc(pl)}, ${l.length} glimpses"><rect class="mpb" x="-22" y="-22" width="44" height="44" rx="6"/><image href="${href(l[0])}" x="-19" y="-19" width="38" height="38" preserveAspectRatio="xMidYMid slice" clip-path="url(#pc)"/><g transform="translate(20 -20)"><rect class="mpc" x="-10" y="-9" width="20" height="18" rx="5"/><text class="mpn" y="3.8" text-anchor="middle">${l.length}</text></g></g>`}).join('');
+const sel=U.place&&m[U.place]?m[U.place]:null;
+return `<div class="mapwrap"><svg class="map" viewBox="0 0 400 890" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of Amsterdam with ${n} places"><defs><clipPath id="pc"><rect x="-19" y="-19" width="38" height="38" rx="4"/></clipPath></defs>
+<rect class="land" width="400" height="890"/><ellipse class="ring" cx="205" cy="560" rx="228" ry="330"/><path class="water" d="M0 300 L400 318 L400 424 L262 428 L0 396 Z"/>${arcs}<path class="river" d="M286 440 C 281 520, 300 600, 296 660 S 322 800, 336 890"/>
+<ellipse class="park" cx="80" cy="628" rx="50" ry="11" transform="rotate(-12 80 628)"/><ellipse class="park" cx="120" cy="362" rx="32" ry="12"/><ellipse class="park" cx="374" cy="604" rx="22" ry="15"/>
+<text class="ml" x="22" y="352">IJ</text><text class="ml" x="306" y="740">AMSTEL</text><text class="ml" x="40" y="662">VONDELPARK</text>${pins}</svg>
+<div class="mapcap glass">${n} places${none.length?`, ${none.length} without location`:''}</div>
+${sel?`<div class="placecard glass"><div class="wrow"><div><b>${esc(U.place)}</b><small>${sel.length} ${sel.length===1?'glimpse':'glimpses'}</small></div><button class="circ" data-act="noplace" aria-label="Close">${ic('x',16)}</button></div><div class="pstrip">${sel.slice(0,12).map(t=>`<button class="cell" data-cell="${t.id}" data-t="${t.id}" aria-label="Glimpse from ${fmt(t.date)}"></button>`).join('')}</div></div>`:''}</div>`}
+function vGlimpses(){const tr=sorted(S.traces);if(U.gmode==='location')return vMap(tr);
+const first=tr.length?tr[tr.length-1].date:today();
+return `<div class="head"><h1 class="lt">All glimpses</h1><p class="sub">${fmt(first)} – ${fmt(tr.length?tr[0].date:today())}</p></div><div style="height:14px"></div>${grid(tr)}<p class="count">${tr.length} Glimpses<br><small>${S.works.length} became pieces</small></p>`}
+function vThemes(){return `<div class="head tl"><h1 class="lt">Series</h1><p class="sub">${S.themes.length} series, ${esc(S.season.toLowerCase())}</p></div><div style="height:14px"></div>
+<div class="tgrid">${S.themes.map(th=>`<button class="alb" data-go="#/theme/${th.id}"><div class="cov" data-t="${cover(th)||''}"></div><span class="an">${esc(th.name)}</span><span class="ac">${period(th)}</span></button>`).join('')}
+<button class="alb" data-act="newtheme"><div class="newth">${ic('plus',28)}</div><span class="an">New series</span><span class="ac">Start a body of work</span></button></div>`}
+const pill=st=>`<span class="pill"><span class="dot${st==='Sold'?' sold':''}"></span>${esc(st)}</span>`;
+function vWorks(){const ws=sorted(S.works.map(w=>({...w,date:(T(w.trace)||{}).date||''})));const av=S.works.filter(w=>w.status!=='Sold').length;
+return `<div class="head tl"><h1 class="lt">Pieces</h1><p class="sub">${ws.length} ${ws.length===1?'piece':'pieces'}, ${av} available</p></div>
+${ws.length?`<div class="wall">${ws.map(w=>`<button class="art" data-go="#/work/${w.id}"><div class="mat"><div class="im" data-t="${w.trace}"></div></div><div class="lbl"><b>${esc(w.title)}</b><span class="pr">${esc(w.price||'')}</span><span class="md">${esc(w.medium)}${w.size?', '+esc(w.size):''}</span>${pill(w.status)}</div></button>`).join('')}</div>`:'<p class="empty">Pick a glimpse in any series and make it a piece.</p>'}`}
+function vTheme(id){const th=TH(id);if(!th)return '<p class="empty">This series no longer exists.</p>';const l=sorted(inTheme(id));const nw=S.works.filter(w=>l.some(t=>t.id===w.trace)).length;
+return `<div class="hero" data-t="${cover(th)||''}"><div class="ht"><h1>${esc(th.name)}</h1><p>${period(th)}, ${l.length} glimpses, ${nw} ${nw===1?'piece':'pieces'}</p></div></div><p class="idea">${esc(th.idea||'')}</p>${l.length?grid(l):'<p class="empty">Save a glimpse and add it to this series.</p>'}`}
+function seriesOf(w){const t=T(w.trace);const th=t&&t.themes[0]?TH(t.themes[0]):null;return{t,th,l:th?inTheme(th.id).sort((a,b)=>a.date.localeCompare(b.date)):(t?[t]:[])}}
+function vWork(id){const w=W(id);if(!w)return '<p class="empty">This piece no longer exists.</p>';const {t,th,l}=seriesOf(w);
+return `<div class="pd-art"><div class="mat"><div class="im" data-t="${w.trace}"></div></div></div>
+<div class="pd-info"><div class="wrow"><h1>${esc(w.title)}</h1>${pill(w.status)}</div><p class="by">${[w.medium,w.size].filter(Boolean).map(esc).join(', ')}</p>
+<dl class="facts"><div><dt>Series</dt><dd>${th?esc(th.name):'None'}</dd></div><div><dt>Chosen from</dt><dd>${t?'Glimpse, '+fmt(t.date):'—'}</dd></div><div><dt>Price</dt><dd>${esc(w.price||'On request')}</dd></div><div><dt>Year</dt><dd>2026</dd></div></dl></div>
+<div class="sh"><h2>Glimpses</h2>${th?`<button class="link" data-go="#/theme/${th.id}">Open series</button>`:''}</div>
+${th?`<p class="idea">${esc(th.idea?th.idea+'. ':'')}${l.length} glimpses, ${period(th)}.</p>`:''}${grid(l)}`}
+function vRecord(id){const w=W(id);if(!w)return '<div class="rec"><p class="empty" style="margin-top:120px">This page isn’t available.</p></div>';const sold=w.status==='Sold';
+return `<div class="rec" id="rec"><p class="ah">a.h.</p><div class="mat rec-mat"><div class="im" data-t="${w.trace}"></div></div><div class="rec-b"><div class="wrow"><h1>${esc(w.title)}</h1>${pill(w.status)}</div><p class="by">Eva Han</p>
+<dl class="facts"><div><dt>Medium</dt><dd>${esc(w.medium)}</dd></div><div><dt>Size</dt><dd>${esc(w.size||'—')}</dd></div><div><dt>Year</dt><dd>2026</dd></div><div><dt>Price</dt><dd>${esc(w.price||'On request')}</dd></div></dl>
+${sold?'<button class="pri" data-act="req">Ask about similar work</button>':(w.price?`<button class="pri" data-act="buy">Buy for ${esc(w.price)}</button><p class="pnote">Card, iDEAL or Apple Pay. Delivery or pick-up is arranged with the artist.</p>`:'<button class="pri" data-act="req">Ask for the price</button>')}
+<p class="foot">Sold through Atelier Hours. This is a prototype: no money is taken.</p></div></div>`}
+function paint(root){root.querySelectorAll('[data-t]').forEach(el=>{const t=T(el.dataset.t);el.style.backgroundImage=bg(t)})}
+let lastKey='';
+function render(){const v=view();if(['library','themes','works'].includes(v.name)&&U.tab!==v.name){U.tab=v.name;U.sel=false;U.ids.clear()}
+const key=v.name+'/'+(v.id||'');const sc=$('scroll');const keep=key===lastKey?sc.scrollTop:0;
+const isRec=v.name==='record';
+let html='';if(v.name==='theme')html=vTheme(v.id);else if(v.name==='glimpses')html=vGlimpses();else if(v.name==='work')html=vWork(v.id);else if(v.name==='themes')html=vThemes();else if(v.name==='works')html=vWorks();else html=vLibrary();
+if(!isRec){sc.innerHTML=html;paint(sc);sc.scrollTop=keep}
+$('recLayer').innerHTML=isRec?vRecord(v.id):'';if(isRec)paint($('recLayer'));
+let top='';const isMap=v.name==='glimpses'&&U.gmode==='location';sc.classList.toggle('mapmode',isMap);
+const selB=U.sel?`<button class="cap glass" data-act="cancel">Cancel</button>`:`<button class="cap glass" data-act="select">Select</button>`;
+if(isRec)top=U.depth>0?`<button class="circ glass" data-act="back" aria-label="Back">${ic('back',20,2.2)}</button><span></span>`:'<span></span><span></span>';
+else if(v.name==='glimpses')top=`<button class="circ glass" data-act="back" aria-label="Back">${ic('back',20,2.2)}</button><div class="row">${isMap?'':selB}</div>`;
+else if(v.name==='theme')top=`<button class="circ glass" data-act="back" aria-label="Back">${ic('back',20,2.2)}</button><div class="row"></div>`;
+else if(v.name==='work')top=`<button class="circ glass" data-act="back" aria-label="Back">${ic('back',20,2.2)}</button><button class="circ glass" data-act="share" aria-label="Share">${ic('share',19)}</button>`;
+else top=`<span></span><div class="row"></div>`;
+$('top').innerHTML=top;if(!isRec){const tp=$('top');let r=tp.lastElementChild;if(!r||!r.classList.contains('row')){const d=document.createElement('div');d.className='row';if(r&&!(r.tagName==='SPAN'&&!r.textContent))d.appendChild(r.cloneNode(true));if(r)r.replaceWith(d);else tp.appendChild(d);r=d}r.insertAdjacentHTML('beforeend','<button class="me" data-act="profile" aria-label="Your account">E</button>')}
+let bot='';
+if(isRec)bot='';
+else if(v.name==='work'){const w=W(v.id);bot=w?`<div class="buybar"><div><b>${esc(w.price||'Price on request')}</b><small><span class="dot${w.status==='Sold'?' sold':''}"></span>${esc(w.status)}</small></div><button class="pri sm" data-act="qr">${ic('qr',18)}QR to buy</button></div>`:''}
+else if(U.sel){const n=U.ids.size;bot=`<div class="selbar"><span>${n?n+' selected':'Select'}</span><span class="acts"><button class="ghost" data-act="addsel">Add to series</button><button class="ghost" data-act="marksel">Make a piece</button></span></div>`}
+else{const tb=(n,i,l)=>`<button class="tab${U.tab===n?' on':''}" data-go="#/${n}" ${U.tab===n?'aria-current="page"':''}>${ic(i,22,1.7)}<span>${l}</span></button>`;
+const seg=v.name==='glimpses'?`<div class="seg glass" role="tablist" aria-label="View"><button role="tab" class="${U.gmode!=='location'?'on':''}" aria-selected="${U.gmode!=='location'}" data-act="gmode" data-m="grid">All</button><button role="tab" class="${U.gmode==='location'?'on':''}" aria-selected="${U.gmode==='location'}" data-act="gmode" data-m="location">Location</button></div>`:'';
+bot=seg+`<div class="gnb"><nav class="tabbar glass" aria-label="Sections">${tb('library','photo','Home')}${tb('themes','stack','Series')}${tb('works','frame','Pieces')}</nav><button class="fab glass" data-act="new" aria-label="New glimpse">${ic('plus',26,1.6)}</button></div>`}
+$('bot').innerHTML=bot;lastKey=key}
+function toast(msg){const t=$('toast');t.innerHTML=ic('check',18,2.4)+esc(msg);t.classList.add('show');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('show'),1900)}
+function sheet(html){$('sheet').innerHTML='<div class="grab"></div>'+html;$('sheet').classList.add('open');$('scrim').classList.add('open');paint($('sheet'));const f=$('sheet').querySelector('input');if(f&&matchMedia('(min-width:521px)').matches)setTimeout(()=>f.focus(),300)}
+function close(){$('sheet').classList.remove('open');$('scrim').classList.remove('open');U.resetArm=false}
+function chipsFor(ids){const cur=ids.map(T).filter(Boolean);return `<div class="chips">${S.themes.map(th=>{const on=cur.length&&cur.every(t=>t.themes.includes(th.id));return `<button class="chip${on?' on':''}" data-act="chip" data-th="${th.id}" aria-pressed="${on}">${on?ic('check',15,2.6):''}${esc(th.name)}</button>`}).join('')}<button class="chip add" data-act="newtheme">${ic('plus',16,2.2)}New series</button></div>`}
+function savedSheet(){const t=T(U.last);sheet(`<div class="prow"><div class="prev" data-t="${t.id}"></div><div><h3>Saved to Library</h3><p class="hint" style="margin:0">Add it to a series now, or later.</p></div></div>${chipsFor([t.id])}<button class="pri" data-act="close">Done</button>`);U.chipCtx=[t.id]}
+function newSheet(){sheet(`<h3>New glimpse</h3><p class="hint">Save anything that catches your eye. No title needed.</p>
+<button class="opt" data-act="cam"><i>${ic('camera',18)}</i>Take photo</button><button class="opt" data-act="lib"><i>${ic('photo',18)}</i>Choose from photos</button><button class="opt" data-act="sample"><i>${ic('sparkle',18)}</i>Add a sample glimpse</button>`)}
+function themeSheet(){sheet(`<h3>New series</h3><p class="hint">A series gathers glimpses around one idea over a period of time.</p>
+<label class="fld"><span>Name</span><input id="thName" placeholder="Morning light" autocomplete="off"></label><p class="err" id="thErr"></p>
+<label class="fld"><span>The idea, in a line</span><input id="thIdea" placeholder="The first ten minutes of the day" autocomplete="off"></label>
+<button class="pri" data-act="mktheme">Create series</button>`)}
+function markSheet(tid){U.markId=tid;const t=T(tid);const th=t.themes[0]?TH(t.themes[0]):null;sheet(`<div class="prow"><div class="prev" data-t="${tid}"></div><div><h3>Make a piece</h3><p class="hint" style="margin:0">${th?'From '+esc(th.name):'A single glimpse'}, ${fmt(t.date)}</p></div></div>
+<label class="fld"><span>Title</span><input id="wTitle" placeholder="${th?esc(th.name)+' study':'Untitled'}" autocomplete="off"></label><p class="err" id="wErr"></p>
+<p class="hint" style="margin:0 0 8px">Medium</p><div class="chips" id="medChips">${['Painting','Photograph','Flowers','Craft','Fashion','Other'].map(m=>`<button class="chip${U.draft.medium===m?' on':''}" data-act="med" data-m="${m}" aria-pressed="${U.draft.medium===m}">${m}</button>`).join('')}</div>
+<div class="row"><label class="fld" style="flex:1"><span>Size</span><input id="wSize" placeholder="30 × 40 cm" autocomplete="off"></label><label class="fld" style="flex:1"><span>Price</span><input id="wPrice" placeholder="€450" inputmode="decimal" autocomplete="off"></label></div>
+<button class="pri" data-act="mkwork">Add to Pieces</button>`)}
+function newTrace(img){const t={id:'u'+Date.now(),date:today(),place:'',themes:[]};if(img)t.img=img;else t.art=mkArt(PAL[['dusk','water','still'][Math.floor(Math.random()*3)]],Math.random);
+const v=view();if(v.name==='theme'&&TH(v.id))t.themes=[v.id];S.traces.push(t);U.last=t.id;if(!save()&&img){toast('Saved for this visit only')}render();savedSheet()}
+function readImg(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>{const im=new Image();im.onload=()=>{const m=900,k=Math.min(1,m/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.78))};im.onerror=rej;im.src=fr.result};fr.onerror=rej;fr.readAsDataURL(file)})}
+['fCam','fLib'].forEach(id=>$(id).addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;close();try{newTrace(await readImg(f))}catch(err){toast('That photo couldn’t be read. Try another.')}}));
+let qrLib=null;function loadQR(){if(qrLib)return qrLib;qrLib=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=()=>res(window.QRCode);s.onerror=rej;document.head.appendChild(s)});return qrLib}
+const recUrl=id=>location.href.split('#')[0]+'#/record/'+id;
+function act(a,el){const v=view();
+switch(a){
+case 'back':back();break;
+case 'noplace':U.place=null;render();break;
+case 'gmode':U.place=null;U.gmode=el.dataset.m;lastKey='';render();break;
+case 'close':close();break;
+case 'select':U.sel=true;U.ids.clear();render();break;
+case 'cancel':U.sel=false;U.ids.clear();render();break;
+case 'new':newSheet();break;
+case 'cam':$('fCam').click();break;
+case 'lib':$('fLib').click();break;
+case 'sample':close();setTimeout(()=>newTrace(null),200);break;
+case 'chip':{const id=el.dataset.th;const ids=U.chipCtx||[];const all=ids.every(x=>T(x).themes.includes(id));ids.forEach(x=>{const t=T(x);t.themes=all?t.themes.filter(y=>y!==id):[...new Set([...t.themes,id])]});save();render();const html=chipsFor(ids);$('sheet').querySelector('.chips').outerHTML=html;break}
+case 'newtheme':U.returnTo=$('sheet').classList.contains('open')?(U.chipCtx||null):null;themeSheet();break;
+case 'mktheme':{const n=$('thName').value.trim();if(!n){$('thErr').textContent='Give the series a name.';$('thName').focus();return}
+const id='th'+Date.now();S.themes.push({id,name:n,idea:$('thIdea').value.trim(),start:today()});(U.returnTo||[]).forEach(x=>{const t=T(x);if(t)t.themes=[...new Set([...t.themes,id])]});save();render();
+if(U.returnTo&&U.returnTo.length){const ids=U.returnTo;U.returnTo=null;if(ids.length===1&&ids[0]===U.last)savedSheet();else{U.chipCtx=ids;sheet(`<h3>Add to series</h3><p class="hint">${ids.length} selected</p>${chipsFor(ids)}<button class="pri" data-act="donesel">Done</button>`)}}else{close();toast('Series created')}break}
+case 'addsel':if(!U.ids.size){toast('Select glimpses first');return}U.chipCtx=[...U.ids];sheet(`<h3>Add to series</h3><p class="hint">${U.ids.size} selected</p>${chipsFor(U.chipCtx)}<button class="pri" data-act="donesel">Done</button>`);break;
+case 'donesel':close();U.sel=false;U.ids.clear();render();toast('Series updated');break;
+case 'marksel':if(U.ids.size!==1){toast('Select one glimpse to make a piece');return}{const id=[...U.ids][0];const ex=workOf(id);if(ex){U.sel=false;U.ids.clear();go('#/work/'+ex.id);return}markSheet(id)}break;
+case 'med':U.draft.medium=el.dataset.m;$('medChips').querySelectorAll('.chip').forEach(c=>{const on=c.dataset.m===U.draft.medium;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on)});break;
+case 'mkwork':{const title=$('wTitle').value.trim()||$('wTitle').placeholder;if(!title){$('wErr').textContent='Give the piece a title.';return}
+const id='w'+Date.now();let price=$('wPrice').value.trim();if(price&&/^\d/.test(price))price='€'+price;S.works.push({id,trace:U.markId,title,medium:U.draft.medium,size:$('wSize').value.trim(),price,status:'Available'});save();close();U.sel=false;U.ids.clear();go('#/work/'+id);setTimeout(()=>toast('Added to Pieces'),250);break}
+case 'trace':{const t=T(el.dataset.id||U.last);break}
+case 'share':{const w=W(v.id);const url=recUrl(w.id);if(navigator.share){navigator.share({title:w.title,text:w.title+' by Eva Han',url}).catch(()=>{})}else if(navigator.clipboard){navigator.clipboard.writeText(url).then(()=>toast('Link copied'),()=>toast('Copy the link from the address bar'))}else toast('Copy the link from the address bar');break}
+case 'qr':{const w=W(v.id);sheet(`<h3>QR to buy</h3><p class="hint">Print this next to ${esc(w.title)}. Scanning it opens a page where visitors can buy it.</p><div class="qr" id="qrBox" aria-label="QR code that opens the buy page"></div><button class="pri" data-act="record">Preview buy page</button>`);loadQR().then(Q=>{new Q($('qrBox'),{text:recUrl(w.id),width:180,height:180,colorDark:'#000',colorLight:'#fff'})}).catch(()=>{$('qrBox').textContent='QR couldn’t load. Check your connection.'});break}
+case 'glimpses':{const w=W(v.id);const {th,l}=seriesOf(w);sheet(`<h3>${th?esc(th.name):'A single glimpse'}</h3><p class="hint">${th?`${l.length} glimpses, ${period(th)}. ${esc(th.idea||'')}`:'This piece came from one glimpse.'}</p><div class="sgrid">${l.map(x=>`<span class="sg" data-t="${x.id}">${x.id===w.trace?`<span class="star">${star(14)}</span>`:''}</span>`).join('')}</div>${th?`<button class="pri" data-go="#/theme/${th.id}">Open series</button>`:''}`);break}
+case 'buy':{const w=W(v.id);U.pm=U.pm||'iDEAL';sheet(`<h3>Buy ${esc(w.title)}</h3><p class="hint">${esc(w.price)}, by Eva Han</p>
+<label class="fld"><span>Name</span><input id="bName" autocomplete="name"></label><label class="fld"><span>Email</span><input id="bMail" type="email" autocomplete="email" placeholder="you@example.com"></label><p class="err" id="bErr"></p>
+<p class="hint" style="margin:0 0 8px">Pay with</p><div class="chips" id="pmChips">${['iDEAL','Card','Apple Pay'].map(m=>`<button class="chip${U.pm===m?' on':''}" data-act="pm" data-m="${m}" aria-pressed="${U.pm===m}">${m}</button>`).join('')}</div>
+<button class="pri" data-act="pay" id="payBtn">Pay ${esc(w.price)}</button><p class="pnote" style="text-align:center">Demo payment. Nothing is charged.</p>`);break}
+case 'pm':U.pm=el.dataset.m;$('pmChips').querySelectorAll('.chip').forEach(c=>{const on=c.dataset.m===U.pm;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on)});break;
+case 'pay':{const w=W(v.id);const n=$('bName').value.trim(),m=$('bMail').value.trim();if(!n||!/^\S+@\S+\.\S+$/.test(m)){$('bErr').textContent=!n?'Add your name.':'Add a valid email address.';return}
+el.textContent='Paying…';setTimeout(()=>{w.status='Sold';(S.orders=S.orders||[]).push({work:w.id,name:n,mail:m,method:U.pm,price:w.price,at:new Date().toISOString()});save();render();
+sheet(`<div class="done">${ic('check',30,2.6)}</div><h3 style="text-align:center">${esc(w.title)} is yours</h3><p class="hint" style="text-align:center">Paid ${esc(w.price)} with ${esc(U.pm)}. A receipt is on its way to ${esc(m)}. Eva will contact you about delivery.</p><button class="pri" data-act="close">Done</button>`)},900);break}
+case 'record':U.fromApp=true;go('#/record/'+v.id);break;
+case 'req':{const w=W(v.id);sheet(`<h3>${w.status==='Sold'?'Ask about similar work':'Request to own'}</h3><p class="hint">${esc(w.title)}, ${esc(w.price||'price on request')}. Eva will reply by email.</p>
+<label class="fld"><span>Name</span><input id="rName" autocomplete="name"></label><label class="fld"><span>Email</span><input id="rMail" type="email" autocomplete="email" placeholder="you@example.com"></label><p class="err" id="rErr"></p>
+<label class="fld"><span>Message (optional)</span><textarea id="rMsg" placeholder="Where it would hang, questions about framing"></textarea></label><button class="pri" data-act="sendreq">Send request</button>`);break}
+case 'sendreq':{const n=$('rName').value.trim(),m=$('rMail').value.trim();if(!n||!/^\S+@\S+\.\S+$/.test(m)){$('rErr').textContent=!n?'Add your name.':'Add a valid email address.';return}
+S.requests.push({work:v.id,name:n,mail:m,msg:$('rMsg').value.trim(),at:new Date().toISOString()});save();close();toast('Request sent');break}
+case 'profile':{const r=S.requests,o=S.orders||[];sheet(`<h3>Prototype</h3><p class="hint">Data lives on this device only.</p>
+<p style="margin:0 0 6px;font-weight:600">Sales (${o.length})</p>${o.length?o.slice(-4).reverse().map(x=>`<p class="hint" style="margin:0 0 6px">${esc((W(x.work)||{}).title||'A piece')} to ${esc(x.name)}, ${esc(x.price)}</p>`).join(''):'<p class="hint">None yet. Open a buy page and pay.</p>'}
+<p style="margin:0 0 6px;font-weight:600">Requests from visitors (${r.length})</p>${r.length?r.slice(-4).reverse().map(x=>`<p class="hint" style="margin:0 0 6px">${esc(x.name)} for ${esc((W(x.work)||{}).title||'a piece')}</p>`).join(''):'<p class="hint">None yet. Ask about a sold piece to see one here.</p>'}
+<button class="opt" data-go="#/record/ember"><i>${ic('record',18)}</i>Open a buy page</button><button class="opt" data-act="reset" id="resetBtn"><i style="color:#FF3B30">${ic('x',18)}</i>Reset demo data</button>`);break}
+case 'reset':if(!U.resetArm){U.resetArm=true;el.lastChild.textContent='Tap again to reset';return}S=seed();save();Object.keys(bgCache).forEach(k=>delete bgCache[k]);U.resetArm=false;close();U.depth=0;location.hash='#/library';render();toast('Demo data reset');break;
+}}
+document.addEventListener('click',e=>{const mp=e.target.closest('[data-place]');if(mp){U.place=U.place===mp.dataset.place?null:mp.dataset.place;render();return}
+const c=e.target.closest('[data-cell]');if(c){const id=c.dataset.cell;if(U.sel){U.ids.has(id)?U.ids.delete(id):U.ids.add(id);render()}else{U.last=id;const t=T(id);const w=workOf(id);U.chipCtx=[id];sheet(`<div class="prev" data-t="${id}" style="width:100%;height:auto;aspect-ratio:1;border-radius:22px;margin:0 0 14px"></div><h3>${fmt(t.date)}${t.place?', '+esc(t.place):''}</h3><p class="hint">Series</p>${chipsFor([id])}${w?`<button class="pri" data-go="#/work/${w.id}">Open piece</button>`:`<button class="pri" data-act="markone" data-id="${id}">Make a piece</button>`}`)}return}
+const g=e.target.closest('[data-go]');if(g){close();if(g.classList.contains('tab')){U.depth=0;location.hash=g.dataset.go}else go(g.dataset.go);return}
+const a=e.target.closest('[data-act]');if(a){if(a.dataset.act==='markone'){markSheet(a.dataset.id);return}act(a.dataset.act,a)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close();if(e.key==='Enter'&&e.target.tagName==='INPUT'){const b=$('sheet').querySelector('.pri');if(b)b.click()}});
+window.addEventListener('hashchange',()=>{U.sel=false;U.ids.clear();close();render()});
+render();
+</script>
+</body>
+</html>
